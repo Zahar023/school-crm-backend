@@ -24,6 +24,22 @@ app.get("/api/slots", async (req, res) => {
   }
 });
 
+app.get("/api/teachers", async (req, res) => {
+  try {
+    const { rows } = await pool.query("SELECT * FROM teachers");
+
+    res.json({
+      success: true,
+      data: rows,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 //
