@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import pool from "./db.js";
 
+const jwt = require("jsonwebtoken");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -38,6 +39,61 @@ app.get("/api/teachers", async (req, res) => {
       error: err.message,
     });
   }
+});
+
+app.post("api/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const { rows } = await pool.query(
+      "SELECT * FROM teachers WHERE email = $1",
+      [email]
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({
+        success: false,
+        error: "Пользователь не найден",
+      });
+    }
+
+    //const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+    const user = rows[0];
+    if (password != user.password_hash) {
+      return res.status(401).json({
+        success: false,
+        error: "Неверный пароль",
+      });
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, role: user.role },
+      "your-secret-key",
+      { expiresIn: "1h" }
+    );
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      error: "Ошибка сервера",
+    });
+  }
+});
+
+router.get("/users", authenticateAdmin, async (req, res) => {
+  const { rows } = await pool.query(
+    "SELECT id, email, role, full_name, is_active FROM users"
+  );
+  res.json(rows);
 });
 
 const PORT = process.env.PORT || 10000;
