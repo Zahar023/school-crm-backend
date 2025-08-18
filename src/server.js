@@ -140,7 +140,6 @@ app.post("/api/register", async (req, res) => {
 
     res.status(201).json({
       success: true,
-      token,
       user: {
         name: newUser.rows[0].name,
         email: newUser.rows[0].email,
