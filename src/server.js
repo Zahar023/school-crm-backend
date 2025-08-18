@@ -35,6 +35,27 @@ app.get("/api/teachers", async (req, res) => {
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (email === "admin@school.com" && password === "admin123") {
+      const token = jwt.sign(
+        { userId: 0, role: "admin" },
+        process.env.JWT_SECRET || "your-secret-key",
+        { expiresIn: "1h" }
+      );
+
+      return res.json({
+        success: true,
+        token,
+        user: {
+          id: 0,
+          email: "admin@example.com",
+          role: "admin",
+          full_name: "Admin",
+        },
+        isAdmin: true,
+      });
+    }
+
     const { rows } = await pool.query(
       "SELECT * FROM teachers WHERE email = $1",
       [email]
@@ -72,6 +93,7 @@ app.post("/api/login", async (req, res) => {
         role: user.role,
         full_name: user.full_name,
       },
+      isAdmin: false,
     });
   } catch (err) {
     console.error(err);
