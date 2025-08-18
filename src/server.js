@@ -104,5 +104,57 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+app.post("/api/register", async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    const allowedRoles = ["teacher", "manager"];
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Недопустимая роль пользователя",
+      });
+    }
+
+    const userExists = await pool.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
+
+    if (userExists.rows.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: "email уже существует",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = await pool.query(
+      `INSERT INTO teachers (name, email, password_hash, role, created_at) 
+       VALUES ($1, $2, $3, $4, NOW()) 
+       RETURNING id, email, role`,
+      [name, email, hashedPassword, role]
+    );
+
+    res.status(201).json({
+      success: true,
+      token,
+      user: {
+        name: newUser.rows[0].name,
+        email: newUser.rows[0].email,
+        role: newUser.rows[0].role,
+      },
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({
+      success: false,
+      message: "Ошибка сервера",
+    });
+  }
+});
+
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
