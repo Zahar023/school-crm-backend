@@ -69,9 +69,9 @@ app.post("/api/login", async (req, res) => {
     }
 
     const user = rows[0];
-    //const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
 
-    if (password != user.password_hash) {
+    if (isPasswordValid) {
       return res.status(401).json({
         success: false,
         error: "Неверный пароль",
