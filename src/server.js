@@ -188,7 +188,13 @@ app.patch("/api/teachers/status", async (req, res) => {
       success: true,
       message: "Статус обновлен",
     });
-  } catch {}
+  } catch {
+    console.error(err.message);
+    res.status(500).json({
+      success: false,
+      message: "Ошибка сервера",
+    });
+  }
 });
 
 const PORT = process.env.PORT || 10000;
