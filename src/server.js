@@ -170,7 +170,7 @@ app.patch("/api/teachers/status", async (req, res) => {
       email,
     ]);
 
-    if (userExists.rows.length === 0) {
+    if (user.rows.length === 0) {
       return res.status(404).json({
         success: false,
         message: "email пользователя не существует",
