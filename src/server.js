@@ -155,7 +155,7 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-app.post("/api/teachers/status", async (req, res) => {
+app.patch("/api/teachers/status", async (req, res) => {
   try {
     const { email, active } = req.body;
 
