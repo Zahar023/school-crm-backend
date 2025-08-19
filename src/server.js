@@ -155,5 +155,41 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+app.post("/api/teachers/status", async (req, res) => {
+  try {
+    const { email, active } = req.body;
+
+    if (!email || active === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: "Email и active обязательны",
+      });
+    }
+
+    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+
+    if (userExists.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "email пользователя не существует",
+      });
+    }
+
+    const newUser = await pool.query(
+      `UPDATE teachers 
+        SET active = $1 
+        WHERE email = $2`,
+      [active, email]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: "Статус обновлен",
+    });
+  } catch {}
+});
+
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
