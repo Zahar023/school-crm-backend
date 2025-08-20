@@ -166,7 +166,7 @@ app.patch("/api/teachers/status", async (req, res) => {
       });
     }
 
-    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
+    const user = await pool.query("SELECT * FROM teachers WHERE email = $1", [
       email,
     ]);
 
@@ -184,11 +184,11 @@ app.patch("/api/teachers/status", async (req, res) => {
       [active, email]
     );
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       message: "Статус обновлен",
     });
-  } catch {
+  } catch (err) {
     console.error(err.message);
     res.status(500).json({
       success: false,
