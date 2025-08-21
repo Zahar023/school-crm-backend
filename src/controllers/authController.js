@@ -42,6 +42,14 @@ export const login = async (req, res) => {
     const user = rows[0];
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
 
+    if (!user.active) {
+      return errorResponse(
+        res,
+        "Аккаунт заблокирован. Обратитесь к администратору",
+        403
+      );
+    }
+
     if (!isPasswordValid) {
       return errorResponse(res, "Неверный пароль", 401);
     }
