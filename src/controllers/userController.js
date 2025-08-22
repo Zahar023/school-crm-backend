@@ -1,19 +1,19 @@
 import pool from "../config/database.js";
 import { successResponse, errorResponse } from "../utils/responses.js";
 
-export const getAllTeachers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
   try {
     const { rows } = await pool.query(
-      "SELECT * FROM teachers ORDER BY created_at DESC"
+      "SELECT * FROM users ORDER BY created_at DESC"
     );
     successResponse(res, rows);
   } catch (err) {
-    console.error("Get teachers error:", err);
+    console.error("Get users error:", err);
     errorResponse(res, "Ошибка при получении преподавателей");
   }
 };
 
-export const updateTeacherStatus = async (req, res) => {
+export const updateUserStatus = async (req, res) => {
   try {
     const { email, active } = req.body;
 
@@ -21,7 +21,7 @@ export const updateTeacherStatus = async (req, res) => {
       return errorResponse(res, "Email и active обязательны", 400);
     }
 
-    const user = await pool.query("SELECT * FROM teachers WHERE email = $1", [
+    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
       email,
     ]);
 
@@ -29,7 +29,7 @@ export const updateTeacherStatus = async (req, res) => {
       return errorResponse(res, "Пользователь не существует", 404);
     }
 
-    await pool.query(`UPDATE teachers SET active = $1 WHERE email = $2`, [
+    await pool.query(`UPDATE users SET active = $1 WHERE email = $2`, [
       active,
       email,
     ]);

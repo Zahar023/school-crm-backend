@@ -1,18 +1,18 @@
 import express from "express";
 import {
-  getAllTeachers,
-  updateTeacherStatus,
-} from "../controllers/teacherController.js";
+  getAllUsers,
+  updateUserStatus,
+} from "../controllers/userController.js";
 import { authenticateToken, authorizeRoles } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/", authenticateToken, getAllTeachers);
+router.get("/", authenticateToken, getAllUsers);
 router.patch(
   "/status",
   authenticateToken,
   authorizeRoles("admin"),
-  updateTeacherStatus
+  updateUserStatus
 );
 
 export default router;

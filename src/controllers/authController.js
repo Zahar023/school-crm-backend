@@ -30,10 +30,9 @@ export const login = async (req, res) => {
       );
     }
 
-    const { rows } = await pool.query(
-      "SELECT * FROM teachers WHERE email = $1",
-      [email]
-    );
+    const { rows } = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
 
     if (rows.length === 0) {
       return errorResponse(res, "Пользователь не найден", 401);
@@ -91,7 +90,7 @@ export const register = async (req, res) => {
     }
 
     const userExists = await pool.query(
-      "SELECT * FROM teachers WHERE email = $1",
+      "SELECT * FROM users WHERE email = $1",
       [email]
     );
 
@@ -103,7 +102,7 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = await pool.query(
-      `INSERT INTO teachers (name, email, password_hash, role, created_at) 
+      `INSERT INTO users (name, email, password_hash, role, created_at) 
        VALUES ($1, $2, $3, $4, NOW()) 
        RETURNING id, name, email, role`,
       [name, email, hashedPassword, role]

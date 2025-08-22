@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import authRoutes from "./routes/authRoutes.js";
-import teacherRoutes from "./routes/teacherRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import slotRoutes from "./routes/slotRoutes.js";
 
 dotenv.config();
@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/teachers", teacherRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/slots", slotRoutes);
 
 app.get("/api/health", (req, res) => {
