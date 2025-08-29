@@ -40,3 +40,23 @@ export const updateUserStatus = async (req, res) => {
     errorResponse(res, "Ошибка сервера");
   }
 };
+
+export const getUserStats = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const workedHours = await calculateWorkedHours(id);
+    const activeSlots = await countActiveSlots(id);
+
+    const stats = { hours: workedHours, slots: activeSlots };
+
+    res.json({ success: true, data: stats });
+  } catch {}
+};
+
+async function calculateWorkedHours(teacherId) {
+  return 10; // Заглушка
+}
+
+async function countActiveSlots(teacherId) {
+  return 2; // Заглушка
+}
