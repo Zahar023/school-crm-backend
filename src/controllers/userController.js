@@ -50,7 +50,10 @@ export const getUserStats = async (req, res) => {
     const stats = { hours: workedHours, slots: activeSlots };
 
     res.json({ success: true, data: stats });
-  } catch {}
+  } catch (err) {
+    console.error("Get status error:", err);
+    errorResponse(res, "Ошибка сервера");
+  }
 };
 
 async function calculateWorkedHours(teacherId) {
