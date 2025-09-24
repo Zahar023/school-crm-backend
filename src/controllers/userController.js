@@ -46,8 +46,14 @@ export const getUserStats = async (req, res) => {
     const { id } = req.params;
     const workedHours = await calculateWorkedHours(id);
     const activeSlots = await countActiveSlots(id);
-
-    const stats = { hours: workedHours, slots: activeSlots };
+    const userName = await pool.query("SELECT name FROM users WHERE id = $1", [
+      id,
+    ]);
+    const stats = {
+      hours: workedHours,
+      slots: activeSlots,
+      name: userName.rows[0].name,
+    };
 
     res.json({ success: true, data: stats });
   } catch (err) {
